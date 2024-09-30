@@ -1,0 +1,12 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Dossier cute{% endblock %}
+
+{% block body %}
+    <h1>Les photos de chats</h1>
+    <ul>
+        {% for img in images %}
+            <img src="{{ asset('photos/' ~ NomDuDossier ~ '/' ~ img.fileName) }}" alt="{{ img.fileName }}">
+        {%endfor%}
+    </ul>
+{% endblock %}
