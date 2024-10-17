@@ -63,10 +63,13 @@ class HomeController extends AbstractController
             ->add('photo', FileType::class, ['label' => 'Nom de la photo'])
             ->add("ajouter", SubmitType::class, ['label' => 'Ajouter une photo'])
             ->getForm();
+        
+        $fs = new Filesystem();
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
             $data = $form->getData();
             $photo = $data['photo'];
+
             $photo->move($chemin, $photo->getClientOriginalName());
             return $this->redirectToRoute('app_chatons', ['dossier' => $dossier]);
         }
