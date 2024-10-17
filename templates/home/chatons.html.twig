@@ -1,0 +1,13 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Chatons du dossier {{ nom_dossier }}{% endblock %}
+
+{% block body %}
+    <h1>Chatons du dossier {{ nom_dossier }}</h1>
+
+    <ul>
+        {% for p in photos %}
+            <li>{{ p.filename }}</li>
+        {% endfor %}
+    </ul>
+{% endblock %}

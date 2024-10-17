@@ -16,7 +16,7 @@
         {% endblock %}
     </head>
     <body>
-
+        {{ render(controller('App\\Controller\\MenuController::menu'))}}
         {% block body %}{% endblock %}
     </body>
 </html>

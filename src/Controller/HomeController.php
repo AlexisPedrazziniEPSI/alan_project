@@ -10,43 +10,39 @@ use Symfony\Component\Routing\Attribute\Route;
 
 class HomeController extends AbstractController
 {
-    #[Route('/home', name: 'app_home')]
+    #[Route('/', name: 'app_home')]
     public function index(): Response
     {
 
-//        //Aller chercher le nom des dossiers dans le dossier public/photos
-//        $dossiers = scandir('photos');
-//
-//        //on enlève les deux premiers éléments du tableau . et ..
-//        $dossiers = array_slice($dossiers, 2);
-        // au lieu du scandir, je vais utiliser un objet symfony
-        $finder = new Finder();
-        $dossiers = $finder->directories()->in('photos');
+        /* // aller chercher les noms des dossiers dans public/photos
+        $dossiers = scandir('photos');
 
-        //on envoie le tableau à la vue
-        return $this->render('home/menu.html.twig', [
-            'dossiers' => $dossiers
+        // on enlève les deux premiers éléments du tableau
+        $dossiers = array_slice($dossiers, 2); */
+
+        $finder = new Finder();
+        $dossier = $finder->directories()->in('photos');
+
+        return $this->render('home/index.html.twig', [
+            'dossiers' => $dossier
         ]);
     }
 
-    #[Route('/chatons/{dossier}', name: 'app_chatons')]
-    public function listechatons($dossier): Response
+    #[Route("/chatons/{dossier}", name: 'app_chatons')]
+    public function chatons($dossier): Response
     {
-        //On va vérifier que le dossier existe bien avec symfony
         $fs = new Filesystem();
         $chemin = "photos/$dossier";
-        if(!$fs->exists($chemin)) {
-            throw $this->createNotFoundException('Le dossier n\'existe pas');
+        if (!$fs->exists($chemin)) {
+            throw $this->createNotFoundException("Le dossier $dossier n'existe pas");
         }
-        //on va chercher les images dans le dossier
+
         $finder = new Finder();
-        $images = $finder->files()->in($chemin);
+        $photos = $finder->files()->in($chemin);
 
-        return $this->render('home/liste_chatons.html.twig', [
+        return $this->render('home/chatons.html.twig', [
             'nom_dossier' => $dossier,
-            'images' => $images,
-//            'dossier' => $dossier
+            'photos' => $photos
         ]);
-
     }
 }

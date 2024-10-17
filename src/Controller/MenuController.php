@@ -13,7 +13,7 @@ class MenuController extends AbstractController
         $finder = new Finder();
         $dossiers = $finder->directories()->in('photos');
 
-        return $this->render('menu/menu.html.twig', [
+        return $this->render('menu/index.html.twig', [
             "dossiers" => $dossiers
         ]);
     }
