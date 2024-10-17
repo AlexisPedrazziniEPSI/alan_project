@@ -8,11 +8,13 @@ use Symfony\Component\Routing\Attribute\Route;
 
 class MenuController extends AbstractController
 {
-    #[Route('/menu', name: 'app_menu')]
-    public function index(): Response
+    public function menu(): Response
     {
-        return $this->render('menu/index.html.twig', [
-            'controller_name' => 'MenuController',
+        $finder = new Finder();
+        $dossiers = $finder->directories()->in('photos');
+
+        return $this->render('menu/menu.html.twig', [
+            "dossiers" => $dossiers
         ]);
     }
 }

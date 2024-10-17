@@ -10,35 +10,43 @@ use Symfony\Component\Routing\Attribute\Route;
 
 class HomeController extends AbstractController
 {
-    #[Route('/', name: 'app_home')]
+    #[Route('/home', name: 'app_home')]
     public function index(): Response
     {
-        #$dossier = scandir('public/photos');
-        #$dossier = array_slice($dossier, 2);
 
+//        //Aller chercher le nom des dossiers dans le dossier public/photos
+//        $dossiers = scandir('photos');
+//
+//        //on enlève les deux premiers éléments du tableau . et ..
+//        $dossiers = array_slice($dossiers, 2);
+        // au lieu du scandir, je vais utiliser un objet symfony
         $finder = new Finder();
-        $dossier = $finder->directories()->in('photos');
+        $dossiers = $finder->directories()->in('photos');
 
-        return $this->render('home/index.html.twig', [
-            'dossier' => $dossier,
+        //on envoie le tableau à la vue
+        return $this->render('home/menu.html.twig', [
+            'dossiers' => $dossiers
         ]);
     }
 
-    #[Route("/chatons/{NomDuDossier}", name: "app_liste_chat")]
-    function listeChatons($NomDuDossier): Response
+    #[Route('/chatons/{dossier}', name: 'app_chatons')]
+    public function listechatons($dossier): Response
     {
+        //On va vérifier que le dossier existe bien avec symfony
         $fs = new Filesystem();
-        $chemin = 'photos/' . $NomDuDossier;
-        if (!$fs->exists($chemin)) {
+        $chemin = "photos/$dossier";
+        if(!$fs->exists($chemin)) {
             throw $this->createNotFoundException('Le dossier n\'existe pas');
         }
-
+        //on va chercher les images dans le dossier
         $finder = new Finder();
         $images = $finder->files()->in($chemin);
 
         return $this->render('home/liste_chatons.html.twig', [
+            'nom_dossier' => $dossier,
             'images' => $images,
-            'NomDuDossier' => $NomDuDossier,
+//            'dossier' => $dossier
         ]);
+
     }
 }

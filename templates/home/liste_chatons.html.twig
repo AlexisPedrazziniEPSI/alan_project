@@ -1,12 +1,13 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Dossier cute{% endblock %}
+{% block title %}Chatons du dossier {{ nom_dossier }}{% endblock %}
 
 {% block body %}
-    <h1>Les photos de chats</h1>
+    <h1>Chatons du dossier {{ nom_dossier }}</h1>
+
     <ul>
-        {% for img in images %}
-            <img src="{{ asset('photos/' ~ NomDuDossier ~ '/' ~ img.fileName) }}" alt="{{ img.fileName }}">
-        {%endfor%}
+        {% for d in images %}
+            <li>{{ d.filename }}</li>
+        {% endfor %}
     </ul>
 {% endblock %}
