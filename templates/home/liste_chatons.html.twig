@@ -6,8 +6,20 @@
     <h1>Chatons du dossier {{ nom_dossier }}</h1>
 
     <ul>
-        {% for d in images %}
-            <li>{{ d.filename }}</li>
+        {% for d in photos %}
+            <div class="col col4">
+                <div class="card">
+                    <img class="card-img-top" 
+                    src="{{ asset('photos/' ~ nom_dossier|url_encode ~ '/' ~ d.filename) }}" 
+                    alt="{{ d.filename }}">
+                    <div class="card-body">
+                        <h5 class="card-title
+                        {% if d.filename == 'chaton1.jpg' %}
+                            text-danger
+                        {% endif %}">{{ d.filename }}</h5>
+                    </div>
+                </div>
+            </div>
         {% endfor %}
     </ul>
 {% endblock %}

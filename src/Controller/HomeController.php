@@ -40,7 +40,7 @@ class HomeController extends AbstractController
         $finder = new Finder();
         $photos = $finder->files()->in($chemin);
 
-        return $this->render('home/chatons.html.twig', [
+        return $this->render('home/liste_chatons.html.twig', [
             'nom_dossier' => $dossier,
             'photos' => $photos
         ]);
