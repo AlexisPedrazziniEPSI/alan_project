@@ -8,6 +8,7 @@ use Symfony\Component\Finder\Finder;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\Extension\Core\Type\FileType;
 use Symfony\Component\Routing\Attribute\Route;
@@ -69,8 +70,35 @@ class HomeController extends AbstractController
         if ($form->isSubmitted() && $form->isValid()) {
             $data = $form->getData();
             $photo = $data['photo'];
+            $nomDeBase = pathinfo($photo->getClientOriginalName(), PATHINFO_FILENAME);
+            foreach (scandir($chemin) as $fichier) {
+                if ($fichier == $photo->getClientOriginalName()) {
+                    $i = 1;
+                    $newname = $nomDeBase . '_' . $i . '.' . $photo->getClientOriginalExtension();
+            
+                    while (file_exists($chemin . '/' . $newname)) {
+                        $i++;
+                        $newname = $nomDeBase . '_' . $i . '.' . $photo->getClientOriginalExtension();
+                    }
+                }
+            }            
 
-            $photo->move($chemin, $photo->getClientOriginalName());
+            $photo->move($chemin, $newname);
+            return $this->redirectToRoute('app_chatons', ['dossier' => $dossier]);
+        }
+
+        $removeForm = $this->CreateFormBuilder()
+            ->add('txtsupprimer', ChoiceType::class, [
+                'choices' => array_flip(array_diff(scandir($chemin), array('.', '..')))
+            ])
+            ->add("supprimer", SubmitType::class, ['label' => 'Supprimer la photo'])
+            ->getForm();
+        $removeForm->handleRequest($request);
+        if ($removeForm->isSubmitted() && $removeForm->isValid()) {
+            $data = $removeForm->getData();
+            $photo = $data['txtsupprimer'];
+            $this->addFlash($photo, 'La photo a bien été supprimée');
+            $fs->remove($chemin . '/' . $photo);
             return $this->redirectToRoute('app_chatons', ['dossier' => $dossier]);
         }
 
@@ -80,7 +108,8 @@ class HomeController extends AbstractController
         return $this->render('home/liste_chatons.html.twig', [
             'nom_dossier' => $dossier,
             'photos' => $photos,
-            'formulaire' => $form->createView()
+            'formulaire' => $form->createView(),
+            'removeForm' => $removeForm->createView()
         ]);
     }
-}
+}   
